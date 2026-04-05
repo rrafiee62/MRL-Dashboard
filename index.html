@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MRL KPI Dashboard Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       width: 100%; height: 100%;
       overflow: hidden;
-      background: #1a1a18;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      color: #f1efe8;
+      background: #87CEEB;
+      font-family: 'Rajdhani', sans-serif;
+      color: #1a2a3a;
     }
 
     .page {
@@ -23,24 +24,27 @@
       gap: 2.5vh;
     }
 
+    /* ── Header ── */
     .header {
       display: flex; align-items: center; justify-content: space-between;
     }
-    .dash-title { font-size: 2.4vw; font-weight: 500; color: #f1efe8; line-height: 1.1; }
-    .dash-sub { font-size: 1vw; color: #888780; margin-top: 4px; }
+    .dash-title { font-size: 2.6vw; font-weight: 600; color: #0d2a40; line-height: 1.1; }
+    .dash-sub { font-size: 1.1vw; color: #2a5a7a; margin-top: 4px; }
     .header-right { display: flex; align-items: center; gap: 1.2vw; }
     .status-row { display: flex; align-items: center; gap: 8px; }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
     .dot.err { background: #E24B4A; }
-    .st-txt { font-size: 1vw; color: #888780; }
+    .st-txt { font-size: 1.1vw; color: #2a5a7a; }
     .refresh-btn {
-      font-size: 1vw; color: #d3d1c7;
-      border: 0.5px solid #444441; background: transparent;
+      font-size: 1.1vw; font-family: 'Rajdhani', sans-serif;
+      color: #0d2a40;
+      border: 1px solid #5a9abf; background: rgba(255,255,255,0.3);
       border-radius: 8px; padding: 0.5vh 1.2vw; cursor: pointer;
       transition: background 0.15s;
     }
-    .refresh-btn:hover { background: #2c2c2a; }
+    .refresh-btn:hover { background: rgba(255,255,255,0.55); }
 
+    /* ── Gauges ── */
     .gauges-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -49,8 +53,8 @@
     }
 
     .card {
-      background: #242422;
-      border: 0.5px solid #3a3a38;
+      background: #c8c8c8;
+      border: 1px solid #a8a8a8;
       border-radius: 16px;
       padding: 2.5vh 2vw;
       display: flex; flex-direction: column; align-items: center;
@@ -58,7 +62,7 @@
     }
 
     .card-label {
-      font-size: 1vw; font-weight: 500; color: #888780;
+      font-size: 1.2vw; font-weight: 600; color: #3a3a3a;
       text-transform: uppercase; letter-spacing: 0.1em;
       margin-bottom: 1vh; align-self: flex-start;
     }
@@ -66,10 +70,11 @@
     .gauge-wrap { width: 100%; max-width: 340px; }
 
     .gauge-val {
-      font-size: 4.5vw; font-weight: 500; color: #f1efe8;
+      font-size: 4.8vw; font-weight: 600; color: #1a1a1a;
       margin-top: 1vh; line-height: 1;
     }
 
+    /* ── Bottom ── */
     .bottom-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -77,50 +82,51 @@
     }
 
     .info-card {
-      background: #242422;
-      border: 0.5px solid #3a3a38;
+      background: #c8c8c8;
+      border: 1px solid #a8a8a8;
       border-radius: 16px;
       padding: 2vh 2vw;
       display: flex; flex-direction: column; justify-content: center;
     }
 
     .info-label {
-      font-size: 1vw; font-weight: 500; color: #888780;
+      font-size: 1.2vw; font-weight: 600; color: #3a3a3a;
       text-transform: uppercase; letter-spacing: 0.1em;
       margin-bottom: 1vh;
       display: flex; align-items: center; gap: 8px;
     }
 
     .blynk-badge {
-      font-size: 0.85vw; color: #5DCAA5; background: #0d2a22;
-      padding: 3px 10px; border-radius: 4px; font-weight: 500;
+      font-size: 0.9vw; color: #0F6E56; background: #b8e8d8;
+      padding: 3px 10px; border-radius: 4px; font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
     }
 
     .info-val {
-      font-size: 5vw; font-weight: 500; color: #f1efe8; line-height: 1;
+      font-size: 5.5vw; font-weight: 600; color: #1a1a1a; line-height: 1;
     }
 
-    .info-unit { font-size: 1vw; color: #888780; margin-top: 0.8vh; }
+    .info-unit { font-size: 1.1vw; color: #555; margin-top: 0.8vh; }
 
     .date-card {
-      background: #1f2e23;
-      border: 0.5px solid #2d4533;
+      background: #b8d8e8;
+      border: 1px solid #7aaabf;
       border-radius: 16px;
       padding: 2vh 2vw;
       display: flex; flex-direction: column; justify-content: center;
     }
 
     .date-val {
-      font-size: 4vw; font-weight: 500; color: #9FE1CB; line-height: 1;
+      font-size: 4vw; font-weight: 600; color: #0d2a40; line-height: 1;
       margin-top: 0.5vh;
     }
 
     .skeleton {
       display: inline-block; width: 100px; height: 40px;
-      background: #3a3a38; border-radius: 6px;
+      background: #a8a8a8; border-radius: 6px;
       animation: pulse 1.2s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+    @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
   </style>
 </head>
 <body>
@@ -161,16 +167,16 @@
   <div class="bottom-row">
     <div class="info-card">
       <div class="info-label">
-        NDCR load
+        NDCR Load
         <span class="blynk-badge">Blynk</span>
       </div>
       <div class="info-val" id="v-blynk"><span class="skeleton"></span></div>
       <div class="info-unit" id="u-blynk">live reading</div>
     </div>
     <div class="date-card">
-      <div class="info-label">Reporting date</div>
+      <div class="info-label" style="color:#2a5a7a;">Reporting Date</div>
       <div class="date-val" id="v-date"><span class="skeleton"></span></div>
-      <div class="info-unit" style="margin-top:0.8vh;font-size:1vw;color:#5DCAA5;">Last manual update</div>
+      <div class="info-unit" style="margin-top:0.8vh;font-size:1.1vw;color:#2a5a7a;">Last manual update</div>
     </div>
   </div>
 
@@ -205,7 +211,7 @@
       return p;
     }
 
-    svg.appendChild(mkPath(describeArc(cx, cy, r, 180, 360), "#3a3a38", 16));
+    svg.appendChild(mkPath(describeArc(cx, cy, r, 180, 360), "#a8a8a8", 16));
 
     segments.forEach(seg => {
       const s = 180 + (seg.from / rawMax) * 180;
@@ -223,24 +229,24 @@
     const needle = document.createElementNS(ns, "line");
     needle.setAttribute("x1", bx); needle.setAttribute("y1", by);
     needle.setAttribute("x2", nx); needle.setAttribute("y2", ny);
-    needle.setAttribute("stroke", "#f1efe8"); needle.setAttribute("stroke-width", "3");
+    needle.setAttribute("stroke", "#1a1a1a"); needle.setAttribute("stroke-width", "3");
     needle.setAttribute("stroke-linecap", "round");
     svg.appendChild(needle);
 
     const hub = document.createElementNS(ns, "circle");
     hub.setAttribute("cx", cx); hub.setAttribute("cy", cy);
-    hub.setAttribute("r", "6"); hub.setAttribute("fill", "#f1efe8");
+    hub.setAttribute("r", "6"); hub.setAttribute("fill", "#1a1a1a");
     svg.appendChild(hub);
 
     const mn = document.createElementNS(ns, "text");
     mn.setAttribute("x", "15"); mn.setAttribute("y", "108");
-    mn.setAttribute("font-size", "11"); mn.setAttribute("fill", "#5F5E5A");
+    mn.setAttribute("font-size", "11"); mn.setAttribute("fill", "#666");
     mn.setAttribute("text-anchor", "middle"); mn.textContent = "0";
     svg.appendChild(mn);
 
     const mx = document.createElementNS(ns, "text");
     mx.setAttribute("x", "165"); mx.setAttribute("y", "108");
-    mx.setAttribute("font-size", "11"); mx.setAttribute("fill", "#5F5E5A");
+    mx.setAttribute("font-size", "11"); mx.setAttribute("fill", "#666");
     mx.setAttribute("text-anchor", "middle"); mx.textContent = rawMax;
     svg.appendChild(mx);
   }
@@ -306,7 +312,7 @@
 
     if (blynk.status === "fulfilled") {
       const bv = parseFloat(blynk.value);
-      document.getElementById("v-blynk").textContent = isNaN(bv) ? "—" : bv.toFixed(2);
+      document.getElementById("v-blynk").textContent = isNaN(bv) ? "—" : Math.round(bv).toString();
       document.getElementById("u-blynk").textContent = "live reading";
     } else {
       document.getElementById("v-blynk").textContent = "—";
