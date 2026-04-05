@@ -3,94 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MRL KPI Dashboard</title>
+  <title>MRL Soil Monitoring Dashboard</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #1a1a18;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f3;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-      color: #2c2c2a;
+      color: #f1efe8;
     }
-    .container { max-width: 860px; margin: 0 auto; }
-    .top-row {
+
+    .page {
+      width: 100vw; height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 2.5vh 3vw;
+      gap: 2.5vh;
+    }
+
+    .header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.75rem;
     }
-    .dash-title { font-size: 20px; font-weight: 500; color: #2c2c2a; }
-    .dash-sub { font-size: 13px; color: #888780; margin-top: 2px; }
-    .right-header { display: flex; align-items: center; gap: 10px; }
-    .status-row { display: flex; align-items: center; gap: 6px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
+    .dash-title { font-size: 2.4vw; font-weight: 500; color: #f1efe8; line-height: 1.1; }
+    .dash-sub { font-size: 1vw; color: #888780; margin-top: 4px; }
+    .header-right { display: flex; align-items: center; gap: 1.2vw; }
+    .status-row { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
     .dot.err { background: #E24B4A; }
-    .st-txt { font-size: 12px; color: #888780; }
+    .st-txt { font-size: 1vw; color: #888780; }
     .refresh-btn {
-      font-size: 12px; color: #5F5E5A;
-      border: 0.5px solid #b4b2a9; background: transparent;
-      border-radius: 8px; padding: 5px 14px; cursor: pointer;
+      font-size: 1vw; color: #d3d1c7;
+      border: 0.5px solid #444441; background: transparent;
+      border-radius: 8px; padding: 0.5vh 1.2vw; cursor: pointer;
       transition: background 0.15s;
     }
-    .refresh-btn:hover { background: #e8e8e4; }
+    .refresh-btn:hover { background: #2c2c2a; }
+
     .gauges-row {
-      display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 16px; margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2vw;
+      align-items: stretch;
     }
-    .bottom-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-    }
+
     .card {
-      background: #fff; border: 0.5px solid #d3d1c7;
-      border-radius: 12px; padding: 1.1rem;
+      background: #242422;
+      border: 0.5px solid #3a3a38;
+      border-radius: 16px;
+      padding: 2.5vh 2vw;
       display: flex; flex-direction: column; align-items: center;
+      justify-content: center;
     }
+
     .card-label {
-      font-size: 11px; font-weight: 500; color: #888780;
-      text-transform: uppercase; letter-spacing: 0.07em;
-      margin-bottom: 8px; align-self: flex-start;
+      font-size: 1vw; font-weight: 500; color: #888780;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1vh; align-self: flex-start;
     }
-    .gauge-wrap { width: 100%; max-width: 190px; }
-    .gauge-val { font-size: 26px; font-weight: 500; color: #2c2c2a; margin-top: 4px; }
+
+    .gauge-wrap { width: 100%; max-width: 340px; }
+
+    .gauge-val {
+      font-size: 4.5vw; font-weight: 500; color: #f1efe8;
+      margin-top: 1vh; line-height: 1;
+    }
+
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2vw;
+    }
+
     .info-card {
-      background: #fff; border: 0.5px solid #d3d1c7;
-      border-radius: 12px; padding: 1.1rem 1.4rem;
+      background: #242422;
+      border: 0.5px solid #3a3a38;
+      border-radius: 16px;
+      padding: 2vh 2vw;
+      display: flex; flex-direction: column; justify-content: center;
     }
+
     .info-label {
-      font-size: 11px; font-weight: 500; color: #888780;
-      text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px;
-      display: flex; align-items: center; gap: 6px;
+      font-size: 1vw; font-weight: 500; color: #888780;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1vh;
+      display: flex; align-items: center; gap: 8px;
     }
+
     .blynk-badge {
-      font-size: 10px; color: #0F6E56; background: #E1F5EE;
-      padding: 2px 7px; border-radius: 4px; font-weight: 500;
+      font-size: 0.85vw; color: #5DCAA5; background: #0d2a22;
+      padding: 3px 10px; border-radius: 4px; font-weight: 500;
     }
-    .info-val { font-size: 28px; font-weight: 500; color: #2c2c2a; }
-    .info-unit { font-size: 13px; color: #888780; margin-top: 3px; }
+
+    .info-val {
+      font-size: 5vw; font-weight: 500; color: #f1efe8; line-height: 1;
+    }
+
+    .info-unit { font-size: 1vw; color: #888780; margin-top: 0.8vh; }
+
     .date-card {
-      background: #f1efe8; border-radius: 12px; padding: 1.1rem 1.4rem;
+      background: #1f2e23;
+      border: 0.5px solid #2d4533;
+      border-radius: 16px;
+      padding: 2vh 2vw;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    .date-val { font-size: 22px; font-weight: 500; color: #2c2c2a; margin-top: 4px; }
+
+    .date-val {
+      font-size: 4vw; font-weight: 500; color: #9FE1CB; line-height: 1;
+      margin-top: 0.5vh;
+    }
+
     .skeleton {
-      display: inline-block; width: 70px; height: 24px;
-      background: #d3d1c7; border-radius: 4px;
+      display: inline-block; width: 100px; height: 40px;
+      background: #3a3a38; border-radius: 6px;
       animation: pulse 1.2s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
-    @media (max-width: 600px) {
-      .gauges-row { grid-template-columns: 1fr; }
-      .bottom-row { grid-template-columns: 1fr; }
-    }
+    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
   </style>
 </head>
 <body>
-<div class="container">
+<div class="page">
 
-  <div class="top-row">
+  <div class="header">
     <div>
-      <div class="dash-title">MRL KPI Dashboard </div>
+      <div class="dash-title">MRL soil monitoring</div>
       <div class="dash-sub">Auto-refreshes every hour</div>
     </div>
-    <div class="right-header">
+    <div class="header-right">
       <div class="status-row">
         <div class="dot" id="sdot"></div>
         <span class="st-txt" id="stxt">Loading...</span>
@@ -129,7 +170,7 @@
     <div class="date-card">
       <div class="info-label">Reporting date</div>
       <div class="date-val" id="v-date"><span class="skeleton"></span></div>
-      <div class="info-unit" style="margin-top:4px;font-size:12px;color:#888780;">Last manual update</div>
+      <div class="info-unit" style="margin-top:0.8vh;font-size:1vw;color:#5DCAA5;">Last manual update</div>
     </div>
   </div>
 
@@ -164,13 +205,13 @@
       return p;
     }
 
-    svg.appendChild(mkPath(describeArc(cx, cy, r, 180, 360), "#e0ddd6", 14));
+    svg.appendChild(mkPath(describeArc(cx, cy, r, 180, 360), "#3a3a38", 16));
 
     segments.forEach(seg => {
       const s = 180 + (seg.from / rawMax) * 180;
       const e = 180 + (seg.to / rawMax) * 180;
       if (Math.abs(e - s) < 0.1) return;
-      svg.appendChild(mkPath(describeArc(cx, cy, r, s, e), seg.color, 14));
+      svg.appendChild(mkPath(describeArc(cx, cy, r, s, e), seg.color, 16));
     });
 
     const norm = Math.max(0, Math.min(value, rawMax)) / rawMax;
@@ -182,24 +223,24 @@
     const needle = document.createElementNS(ns, "line");
     needle.setAttribute("x1", bx); needle.setAttribute("y1", by);
     needle.setAttribute("x2", nx); needle.setAttribute("y2", ny);
-    needle.setAttribute("stroke", "#2c2c2a"); needle.setAttribute("stroke-width", "2.5");
+    needle.setAttribute("stroke", "#f1efe8"); needle.setAttribute("stroke-width", "3");
     needle.setAttribute("stroke-linecap", "round");
     svg.appendChild(needle);
 
     const hub = document.createElementNS(ns, "circle");
     hub.setAttribute("cx", cx); hub.setAttribute("cy", cy);
-    hub.setAttribute("r", "5"); hub.setAttribute("fill", "#2c2c2a");
+    hub.setAttribute("r", "6"); hub.setAttribute("fill", "#f1efe8");
     svg.appendChild(hub);
 
     const mn = document.createElementNS(ns, "text");
     mn.setAttribute("x", "15"); mn.setAttribute("y", "108");
-    mn.setAttribute("font-size", "10"); mn.setAttribute("fill", "#b4b2a9");
+    mn.setAttribute("font-size", "11"); mn.setAttribute("fill", "#5F5E5A");
     mn.setAttribute("text-anchor", "middle"); mn.textContent = "0";
     svg.appendChild(mn);
 
     const mx = document.createElementNS(ns, "text");
     mx.setAttribute("x", "165"); mx.setAttribute("y", "108");
-    mx.setAttribute("font-size", "10"); mx.setAttribute("fill", "#b4b2a9");
+    mx.setAttribute("font-size", "11"); mx.setAttribute("fill", "#5F5E5A");
     mx.setAttribute("text-anchor", "middle"); mx.textContent = rawMax;
     svg.appendChild(mx);
   }
@@ -257,15 +298,16 @@
 
     if (data.status === "fulfilled" && data.value) {
       const d = data.value;
-      if (d.compaction) { const v = parseFloat(d.compaction); renderCard("compaction", v, COMPACTION_SEGS, 1, v.toFixed(2)); }
-      if (d.density)    { const v = parseFloat(d.density);    renderCard("density",    v, DENSITY_SEGS,    1, v.toFixed(2)); }
-      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     100, v.toFixed(1)); }
+      if (d.compaction) { const v = parseFloat(d.compaction); renderCard("compaction", v, COMPACTION_SEGS, 1,   v.toFixed(2)); }
+      if (d.density)    { const v = parseFloat(d.density);    renderCard("density",    v, DENSITY_SEGS,    1,   v.toFixed(2)); }
+      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     100,   v.toFixed(1)); }
       if (d.date) document.getElementById("v-date").textContent = d.date;
     }
 
     if (blynk.status === "fulfilled") {
       const bv = parseFloat(blynk.value);
       document.getElementById("v-blynk").textContent = isNaN(bv) ? "—" : bv.toFixed(2);
+      document.getElementById("u-blynk").textContent = "live reading";
     } else {
       document.getElementById("v-blynk").textContent = "—";
       document.getElementById("u-blynk").textContent = "unavailable";
@@ -280,4 +322,3 @@
 </script>
 </body>
 </html>
-
