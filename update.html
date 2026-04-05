@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MRL Dashboard — Update Values</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100vh;
+      background: #87CEEB;
+      font-family: 'Rajdhani', sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background: #d0d0d0;
+      border: 1px solid #a8a8a8;
+      border-radius: 20px;
+      padding: 2.5rem 2.5rem;
+      width: 100%; max-width: 480px;
+    }
+
+    .card-title {
+      font-size: 28px; font-weight: 600; color: #0d2a40;
+      margin-bottom: 4px;
+    }
+    .card-sub {
+      font-size: 15px; color: #2a5a7a; margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 13px; font-weight: 600; color: #555;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px; margin-top: 1.5rem;
+    }
+    .section-title:first-of-type { margin-top: 0; }
+
+    .field { margin-bottom: 1rem; }
+
+    label {
+      display: block; font-size: 15px; font-weight: 500;
+      color: #2a2a2a; margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="number"], input[type="password"] {
+      width: 100%; padding: 10px 14px;
+      font-family: 'Rajdhani', sans-serif; font-size: 17px;
+      background: #f0f0f0; color: #1a1a1a;
+      border: 1px solid #a0a0a0; border-radius: 10px;
+      outline: none; transition: border 0.15s, background 0.15s;
+    }
+    input:focus {
+      border-color: #5a9abf; background: #fff;
+    }
+
+    .hint {
+      font-size: 12px; color: #666; margin-top: 4px;
+    }
+
+    .token-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .token-row input { flex: 1; }
+    .toggle-btn {
+      font-size: 13px; font-family: 'Rajdhani', sans-serif;
+      color: #2a5a7a; background: #b8d4e4;
+      border: 1px solid #7aaabf; border-radius: 8px;
+      padding: 10px 12px; cursor: pointer; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .toggle-btn:hover { background: #a0c4d8; }
+
+    .divider {
+      border: none; border-top: 1px solid #b0b0b0;
+      margin: 1.5rem 0;
+    }
+
+    .submit-btn {
+      width: 100%; padding: 14px;
+      font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 600;
+      color: #fff; background: #1a6a9a;
+      border: none; border-radius: 12px;
+      cursor: pointer; margin-top: 1.5rem;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .submit-btn:hover { background: #155a85; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #7aaabf; cursor: not-allowed; }
+
+    .toast {
+      display: none;
+      margin-top: 1.2rem;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 16px; font-weight: 500;
+      text-align: center;
+    }
+    .toast.success { background: #c8ecd8; color: #1a5a30; border: 1px solid #8acca8; display: block; }
+    .toast.error   { background: #f5d0d0; color: #7a1a1a; border: 1px solid #e09090; display: block; }
+
+    .dashboard-link {
+      display: block; text-align: center;
+      margin-top: 1.2rem; font-size: 15px;
+      color: #1a6a9a; text-decoration: none;
+    }
+    .dashboard-link:hover { text-decoration: underline; }
+
+    .token-help {
+      background: #b8d4e4; border: 1px solid #7aaabf;
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 13px; color: #0d2a40; line-height: 1.6;
+      margin-top: 8px;
+    }
+    .token-help a { color: #1a6a9a; }
+    .token-help ol { padding-left: 16px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-title">Update Dashboard</div>
+  <div class="card-sub">MRL Soil Monitoring — data entry form</div>
+
+  <!-- GitHub Token -->
+  <div class="section-title">GitHub Access</div>
+  <div class="field">
+    <label>Personal Access Token</label>
+    <div class="token-row">
+      <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" />
+      <button class="toggle-btn" onclick="toggleToken()">Show</button>
+    </div>
+    <div class="hint">Saved in your browser only. Never sent anywhere except GitHub.</div>
+  </div>
+
+  <div class="token-help" id="token-help" style="display:none;">
+    <strong>How to get a token (one time only):</strong>
+    <ol>
+      <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></li>
+      <li>Note: "MRL Dashboard update"</li>
+      <li>Expiration: No expiration (or 1 year)</li>
+      <li>Tick <strong>repo</strong> scope</li>
+      <li>Click Generate token — copy and paste it here</li>
+    </ol>
+  </div>
+  <div style="margin-top:6px;">
+    <button class="toggle-btn" style="font-size:12px;padding:6px 10px;" onclick="toggleHelp()">How do I get a token?</button>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- KPI Values -->
+  <div class="section-title">KPI Values</div>
+
+  <div class="field">
+    <label>Date</label>
+    <input type="text" id="f-date" placeholder="e.g. 05 Apr 2026" />
+  </div>
+  <div class="field">
+    <label>Compaction <span style="font-weight:400;color:#666;">(0 – 1)</span></label>
+    <input type="number" id="f-compaction" placeholder="e.g. 0.82" min="0" max="1" step="0.01" />
+  </div>
+  <div class="field">
+    <label>Density <span style="font-weight:400;color:#666;">(0 – 1)</span></label>
+    <input type="number" id="f-density" placeholder="e.g. 0.75" min="0" max="1" step="0.01" />
+  </div>
+  <div class="field">
+    <label>Soil <span style="font-weight:400;color:#666;">(0 – 100)</span></label>
+    <input type="number" id="f-soil" placeholder="e.g. 8" min="0" max="100" step="0.1" />
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitData()">Submit</button>
+
+  <div class="toast" id="toast"></div>
+
+  <a class="dashboard-link" href="https://rrafiee62.github.io/MRL-Dashboard/" target="_blank">
+    View dashboard →
+  </a>
+</div>
+
+<script>
+  const REPO_OWNER = "rrafiee62";
+  const REPO_NAME  = "MRL-Dashboard";
+  const FILE_PATH  = "data.txt";
+  const BRANCH     = "main";
+
+  const TOKEN_KEY = "mrl_gh_token";
+
+  window.addEventListener("load", () => {
+    const saved = localStorage.getItem(TOKEN_KEY);
+    if (saved) document.getElementById("gh-token").value = saved;
+
+    const today = new Date();
+    const d = today.getDate().toString().padStart(2,"0");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    document.getElementById("f-date").value = `${d} ${months[today.getMonth()]} ${today.getFullYear()}`;
+  });
+
+  function toggleToken() {
+    const inp = document.getElementById("gh-token");
+    const btn = document.querySelector(".toggle-btn");
+    if (inp.type === "password") { inp.type = "text"; btn.textContent = "Hide"; }
+    else { inp.type = "password"; btn.textContent = "Show"; }
+  }
+
+  function toggleHelp() {
+    const h = document.getElementById("token-help");
+    h.style.display = h.style.display === "none" ? "block" : "none";
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast " + type;
+    if (type === "success") setTimeout(() => t.className = "toast", 5000);
+  }
+
+  async function submitData() {
+    const token      = document.getElementById("gh-token").value.trim();
+    const date       = document.getElementById("f-date").value.trim();
+    const compaction = document.getElementById("f-compaction").value.trim();
+    const density    = document.getElementById("f-density").value.trim();
+    const soil       = document.getElementById("f-soil").value.trim();
+
+    if (!token)      return showToast("Please enter your GitHub token.", "error");
+    if (!date)       return showToast("Please enter a date.", "error");
+    if (!compaction) return showToast("Please enter a compaction value.", "error");
+    if (!density)    return showToast("Please enter a density value.", "error");
+    if (!soil)       return showToast("Please enter a soil value.", "error");
+
+    localStorage.setItem(TOKEN_KEY, token);
+
+    const btn = document.getElementById("submit-btn");
+    btn.disabled = true; btn.textContent = "Submitting...";
+
+    const content = `Date,${date}\nCompaction,${compaction}\nDensity,${density}\nSoil,${soil}\n`;
+
+    try {
+      const apiBase = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+      const headers = {
+        "Authorization": `token ${token}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+      };
+
+      const getRes = await fetch(apiBase, { headers });
+      if (!getRes.ok) throw new Error("Could not reach GitHub. Check your token.");
+      const getJson = await getRes.json();
+      const sha = getJson.sha;
+
+      const putRes = await fetch(apiBase, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          message: `Update data.txt — ${date}`,
+          content: btoa(content),
+          sha,
+          branch: BRANCH,
+        }),
+      });
+
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || "GitHub update failed.");
+      }
+
+      showToast("Dashboard updated successfully!", "success");
+    } catch (e) {
+      showToast("Error: " + e.message, "error");
+    } finally {
+      btn.disabled = false; btn.textContent = "Submit";
+    }
+  }
+</script>
+</body>
+</html>
