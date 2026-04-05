@@ -184,10 +184,9 @@
 
 <script>
   const CONFIG = {
-    GITHUB_RAW: "https://raw.githubusercontent.com/rrafiee62/MRL-Dashboard/main/data.txt",
-    BLYNK_TOKEN: "QqLBzn4ekaxI8ot_c-64KUkAgZuJMxY1",
-    BLYNK_PIN: "v0",
-  };
+  GITHUB_RAW: "https://raw.githubusercontent.com/rrafiee62/MRL-Dashboard/main/data.txt",
+  BLYNK_WORKER: "https://mrl-blynk.rzarafiee.workers.dev/",
+};
 
   function describeArc(cx, cy, r, startDeg, endDeg) {
     const toR = d => d * Math.PI / 180;
@@ -290,11 +289,11 @@
     return data;
   }
 
-  async function fetchBlynk() {
-    const url = `https://blynk.cloud/external/api/get?token=${CONFIG.BLYNK_TOKEN}&${CONFIG.BLYNK_PIN}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Blynk fetch failed");
-    return res.text();
+ async function fetchBlynk() {
+  const res = await fetch(CONFIG.BLYNK_WORKER);
+  if (!res.ok) throw new Error("Blynk fetch failed");
+  return res.text();
+}
   }
 
   async function fetchAll() {
