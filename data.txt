@@ -1,4 +1,4 @@
-Date,06 Apr 2026
+Date,07 Apr 2026
 Compaction,0.84
-Density,0.68
-Soil,24
+Density,0.76
+Soil,26
