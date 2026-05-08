@@ -1,4 +1,4 @@
 Date,08 May 2026
-Compaction,0.95
-Density,0.87
-Soil,10
+Compaction,0.78
+Density,0.72
+Soil,16
