@@ -16,6 +16,87 @@
       color: #1a2a3a;
     }
 
+    /* ── Lock Screen ── */
+    #lock-screen {
+      position: fixed; inset: 0;
+      background: #87CEEB;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+
+    .lock-box {
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      width: 340px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .lock-icon {
+      width: 60px; height: 60px;
+      background: rgba(13,42,64,0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .lock-title {
+      font-size: 1.6rem; font-weight: 600; color: #0d2a40;
+      margin-bottom: 0.3rem;
+    }
+
+    .lock-sub {
+      font-size: 0.95rem; color: #2a5a7a; margin-bottom: 1.8rem;
+    }
+
+    .lock-input {
+      width: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.15rem;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #5a9abf;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.7);
+      color: #0d2a40;
+      outline: none;
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.15em;
+      text-align: center;
+      transition: border-color 0.15s;
+    }
+    .lock-input:focus { border-color: #0d2a40; }
+    .lock-input.error { border-color: #E24B4A; animation: shake 0.3s ease; }
+
+    @keyframes shake {
+      0%,100%{ transform: translateX(0); }
+      25%     { transform: translateX(-6px); }
+      75%     { transform: translateX(6px); }
+    }
+
+    .lock-btn {
+      width: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem; font-weight: 600;
+      padding: 0.7rem 1rem;
+      background: #0d2a40;
+      color: #fff;
+      border: none; border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .lock-btn:hover { background: #185F80; }
+
+    .lock-error {
+      font-size: 0.9rem; color: #E24B4A;
+      margin-top: 0.8rem; min-height: 1.2em;
+    }
+
+    /* ── Dashboard (hidden until unlocked) ── */
+    #dashboard { display: none; }
+
     .page {
       width: 100vw; height: 100vh;
       display: grid;
@@ -47,7 +128,7 @@
     /* ── Gauges ── */
     .gauges-row {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 2vw;
       align-items: stretch;
     }
@@ -130,6 +211,28 @@
   </style>
 </head>
 <body>
+
+<!-- ── Lock Screen ── -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">MRL KPI Dashboard</div>
+    <div class="lock-sub">Enter your access code to continue</div>
+    <input
+      class="lock-input"
+      id="pw-input"
+      type="password"
+      placeholder="Access code"
+      autocomplete="off"
+      maxlength="30"
+    />
+    <button class="lock-btn" onclick="checkPassword()">Unlock Dashboard</button>
+    <div class="lock-error" id="lock-error"></div>
+  </div>
+</div>
+
+<!-- ── Dashboard ── -->
+<div id="dashboard">
 <div class="page">
 
   <div class="header">
@@ -162,6 +265,11 @@
       <div class="gauge-wrap"><svg id="g-soil" viewBox="0 0 180 110" width="100%"></svg></div>
       <div class="gauge-val" id="v-soil"><span class="skeleton"></span></div>
     </div>
+    <div class="card">
+      <div class="card-label">MTD Soil</div>
+      <div class="gauge-wrap"><svg id="g-mtdsoil" viewBox="0 0 180 110" width="100%"></svg></div>
+      <div class="gauge-val" id="v-mtdsoil"><span class="skeleton"></span></div>
+    </div>
   </div>
 
   <div class="bottom-row">
@@ -181,13 +289,54 @@
   </div>
 
 </div>
+</div>
 
 <script>
+  /* ── Config ──────────────────────────────────────────────
+     Change ACCESS_CODE to whatever password you want.
+     SESSION_KEY is the sessionStorage key used to remember
+     the unlock within the same browser tab.
+  ─────────────────────────────────────────────────────── */
   const CONFIG = {
-  GITHUB_RAW: "https://raw.githubusercontent.com/rrafiee62/MRL-Dashboard/main/data.txt",
-  BLYNK_WORKER: "https://mrl-blynk.rzarafiee.workers.dev/",
-};
+    ACCESS_CODE:  "MRL2025",
+    SESSION_KEY:  "mrl_unlocked",
+    GITHUB_RAW:   "https://raw.githubusercontent.com/rrafiee62/MRL-Dashboard/main/data.txt",
+    BLYNK_WORKER: "https://mrl-blynk.rzarafiee.workers.dev/",
+  };
 
+  /* ── Password gate ── */
+  function checkPassword() {
+    const val = document.getElementById("pw-input").value.trim();
+    if (val === CONFIG.ACCESS_CODE) {
+      sessionStorage.setItem(CONFIG.SESSION_KEY, "1");
+      unlock();
+    } else {
+      const input = document.getElementById("pw-input");
+      const err   = document.getElementById("lock-error");
+      err.textContent = "Incorrect access code. Please try again.";
+      input.classList.add("error");
+      input.value = "";
+      setTimeout(() => input.classList.remove("error"), 400);
+    }
+  }
+
+  function unlock() {
+    document.getElementById("lock-screen").style.display = "none";
+    document.getElementById("dashboard").style.display  = "block";
+    fetchAll();
+  }
+
+  /* Allow pressing Enter in the password field */
+  document.getElementById("pw-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") checkPassword();
+  });
+
+  /* Auto-unlock if already authenticated this session */
+  if (sessionStorage.getItem(CONFIG.SESSION_KEY) === "1") {
+    unlock();
+  }
+
+  /* ── Gauge helpers ── */
   function describeArc(cx, cy, r, startDeg, endDeg) {
     const toR = d => d * Math.PI / 180;
     const x1 = cx + r * Math.cos(toR(startDeg)), y1 = cy + r * Math.sin(toR(startDeg));
@@ -261,9 +410,12 @@
     { from: 0.79, to: 1,    color: "#639922" },
   ];
   const SOIL_SEGS = [
-    { from: 0,  to: 10,  color: "#639922" },
-    { from: 10, to: 15,  color: "#EF9F27" },
-    { from: 15, to: 100, color: "#E24B4A" },
+    { from: 0,   to: 100, color: "#639922" },
+    { from: 100, to: 200, color: "#E24B4A" },
+  ];
+  const MTDSOIL_SEGS = [
+    { from: 0,   to: 100, color: "#639922" },
+    { from: 100, to: 200, color: "#E24B4A" },
   ];
 
   function renderCard(id, val, segs, rawMax, display) {
@@ -289,12 +441,11 @@
     return data;
   }
 
- async function fetchBlynk() {
-  const res = await fetch(CONFIG.BLYNK_WORKER);
-  if (!res.ok) throw new Error("Blynk fetch failed");
-  return res.text();
-}
-
+  async function fetchBlynk() {
+    const res = await fetch(CONFIG.BLYNK_WORKER);
+    if (!res.ok) throw new Error("Blynk fetch failed");
+    return res.text();
+  }
 
   async function fetchAll() {
     setStatus(true, "Fetching...");
@@ -305,7 +456,8 @@
       const d = data.value;
       if (d.compaction) { const v = parseFloat(d.compaction); renderCard("compaction", v, COMPACTION_SEGS, 1,   v.toFixed(2)); }
       if (d.density)    { const v = parseFloat(d.density);    renderCard("density",    v, DENSITY_SEGS,    1,   v.toFixed(2)); }
-      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     100,   v.toFixed(1)); }
+      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     200,   v.toFixed(1)); }
+      if (d.mtdsoil)    { const v = parseFloat(d.mtdsoil);    renderCard("mtdsoil",    v, MTDSOIL_SEGS,  200,   v.toFixed(1)); }
       if (d.date) document.getElementById("v-date").textContent = d.date;
     }
 
@@ -322,7 +474,6 @@
     setStatus(bothOk, bothOk ? "Updated " + now : "Partial update " + now);
   }
 
-  fetchAll();
   setInterval(fetchAll, 60 * 60 * 1000);
 </script>
 </body>
