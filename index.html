@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MRL KPI DASHBOARD</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,7 +12,7 @@
       width: 100%; height: 100%;
       overflow: hidden;
       background: #87CEEB;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Inter', sans-serif;
       color: #1a2a3a;
     }
 
@@ -54,7 +54,7 @@
 
     .lock-input {
       width: 100%;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 1.15rem;
       padding: 0.7rem 1rem;
       border: 1.5px solid #5a9abf;
@@ -78,7 +78,7 @@
 
     .lock-btn {
       width: 100%;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 1.1rem; font-weight: 600;
       padding: 0.7rem 1rem;
       background: #0d2a40;
@@ -117,7 +117,7 @@
     .dot.err { background: #E24B4A; }
     .st-txt { font-size: 1.1vw; color: #2a5a7a; }
     .refresh-btn {
-      font-size: 1.1vw; font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1vw; font-family: 'Inter', sans-serif;
       color: #0d2a40;
       border: 1px solid #5a9abf; background: rgba(255,255,255,0.3);
       border-radius: 8px; padding: 0.5vh 1.2vw; cursor: pointer;
@@ -180,7 +180,7 @@
     .blynk-badge {
       font-size: 0.9vw; color: #0F6E56; background: #b8e8d8;
       padding: 3px 10px; border-radius: 4px; font-weight: 600;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     .info-val {
@@ -410,8 +410,9 @@
     { from: 0.79, to: 1,    color: "#639922" },
   ];
   const SOIL_SEGS = [
-    { from: 0,   to: 100, color: "#639922" },
-    { from: 100, to: 200, color: "#E24B4A" },
+    { from: 0,  to: 10,  color: "#639922" },
+    { from: 10, to: 15,  color: "#EF9F27" },
+    { from: 15, to: 100, color: "#E24B4A" },
   ];
   const MTDSOIL_SEGS = [
     { from: 0,   to: 100, color: "#639922" },
@@ -456,7 +457,7 @@
       const d = data.value;
       if (d.compaction) { const v = parseFloat(d.compaction); renderCard("compaction", v, COMPACTION_SEGS, 1,   v.toFixed(2)); }
       if (d.density)    { const v = parseFloat(d.density);    renderCard("density",    v, DENSITY_SEGS,    1,   v.toFixed(2)); }
-      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     200,   v.toFixed(1)); }
+      if (d.soil)       { const v = parseFloat(d.soil);       renderCard("soil",       v, SOIL_SEGS,     100,   v.toFixed(1)); }
       if (d.mtdsoil)    { const v = parseFloat(d.mtdsoil);    renderCard("mtdsoil",    v, MTDSOIL_SEGS,  200,   v.toFixed(1)); }
       if (d.date) document.getElementById("v-date").textContent = d.date;
     }
